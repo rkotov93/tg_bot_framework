@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Commands
-  class Unknown < Base
+  class UnknownCommand < Base
     private
 
     def handle

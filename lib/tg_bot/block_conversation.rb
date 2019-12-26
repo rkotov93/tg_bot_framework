@@ -2,7 +2,7 @@
 
 require 'redis'
 
-module Bot
+module TgBot
   class BlockConversation
     attr_reader :uuid, :blockers, :lifetime
 

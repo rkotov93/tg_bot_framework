@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-Dir["../app/**/*.rb"].each { |path| require path }
+Dir["../app/tg_bot/**/*.rb"].each { |path| require path }
 
-module Bot
+module TgBot
   class WebhookHandler
     attr_reader :params, :message
 
@@ -23,26 +23,26 @@ module Bot
     private
 
     def find_blocker
-      data = JSON.parse(redis.lindex(blocker_key, 0))
-      name = data.delete('name')
+      meta = JSON.parse(redis.lindex(blocker_key, 0))
+      name = meta.delete('name')
       klass = "blockers/#{name}_blocker".camelize.constantize
-      klass.new(params.merge(meta: data))
+      klass.new(message: message, params: params, meta: meta)
     end
 
     def find_command
       text = message.text.split(' ').first
       name = COMMANDS.find { |command| text == "/#{command}" }
-      return Bot::Commands::Unknown.new(params) unless name
+      return Bot::Commands::UnknownCommand.new(params) unless name
 
       klass = "commands/#{name}_command".camelize.constantize
-      klass.new(params)
+      klass.new(message: message, params: params)
     end
 
     def find_callback
       data = JSON.parse(message.callback_query.data)
       name = data.delete('command')
       klass = "callbacks/#{name}_callback".camelize.constantize
-      klass.new(params.merge(meta: data))
+      klass.new(message: message, params: params, meta: data)
     end
 
     def redis

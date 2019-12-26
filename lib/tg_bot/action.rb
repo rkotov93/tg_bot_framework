@@ -2,15 +2,14 @@
 
 require 'telegram/bot'
 
-module Bot
-  class BaseAction
+module TgBot
+  class Action
     attr_reader :params, :message, :meta
 
-    def initialize(message:, params:, meta:)
+    def initialize(message:, params:, meta: nil)
       @params = params
       @message = message
-      # @message = params[:message] || params.dig(:callback_query, :message)
-      @meta = :meta
+      @meta = meta
     end
 
     def call
